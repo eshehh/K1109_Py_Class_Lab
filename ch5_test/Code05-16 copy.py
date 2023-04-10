@@ -6,6 +6,10 @@ from tkinter.simpledialog import *
 def func_open() :
     filename = askopenfilename(parent = window, filetypes = (("GIF 파일", "*.gif"), ("모든 파일", "*.*")))
     photo = PhotoImage(file = filename)
+    photo2 = PhotoImage(file = filename)
+
+    pLabel2.configure(image = photo2)
+    pLabel2.image = photo2
 
     width = photo.width()
     height = photo.height()
@@ -30,8 +34,11 @@ window.geometry("500x500")
 window.title("명화 감상하기")
 
 photo = PhotoImage()
+photo2 = PhotoImage()
 pLabel = Label(window, image = photo)
+pLabel2 = Label(window, image = photo2)
 pLabel.pack(expand=1, anchor = CENTER)
+pLabel2.pack(expand=1, anchor = W)
 
 mainMenu = Menu(window)
 window.config(menu = mainMenu)
