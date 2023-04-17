@@ -1,0 +1,119 @@
+import time
+import bs4
+import urllib.request
+import ssl
+import pymysql
+from tkinter import *
+from tkinter import messagebox
+import base64
+
+ssl_context = ssl.SSLContext()
+ssl_context.verify_mode = ssl.CERT_NONE
+subject,link,use1,price,color,url= "","","","","",""
+
+null = None
+## 함수 선언 부분
+def insertData(subject,link,use1,price,color,url) :
+    con, cur = None, None
+    data = ""
+    data0, data1, data2, data3, data4, data5, data6 = "", "", "", "", "", "",""
+    sql=""
+
+    con = pymysql.connect(host='127.0.0.1', user='root', password='k404', database='nike', charset='utf8')
+    cur = con.cursor()
+#   `title` VARCHAR(400) NULL,
+#   `link` VARCHAR(400) NULL,
+#   `use1` VARCHAR(400) NULL,
+#   `price` VARCHAR(400) NULL,
+#   `color` VARCHAR(400) NULL,
+#   `src` VARCHAR(400) NULL,
+    # data0 = data10
+    data1 = subject; 
+    data2 = link; 
+    data3 = use1; 
+    data4 = price;
+    data5 = color;
+    data6 = url;
+    #
+    try :
+        
+        print(null)
+        print(data1)
+        print(data2)
+        print(data3)
+        print(data4)
+        print(data5)
+        print(data6)
+        sql = "INSERT INTO nikeShoes (title,link,use1,price,color,src) VALUES('"+ data1 + "','" + data2 + "','" + data3 + "','" + data4 + "','"+ data5 +"','"+ data6+ "')"
+        cur.execute(sql)
+        
+    except Exception as e :
+        print("예외 발생")
+        # messagebox.showerror('오류', '데이터 입력 오류가 발생함')
+        print(e)
+    else :
+        print("성공")
+        # messagebox.showinfo('성공', '데이터 입력 성공')
+    con.commit()
+    con.close()
+##
+
+
+nateUrl = "https://www.nike.com/kr/w/men-shoes-nik1zy7ok?sort=newest"
+while True :
+    htmlObject = urllib.request.urlopen(nateUrl,context=ssl_context)
+    webPage = htmlObject.read()
+    bsObject = bs4.BeautifulSoup(webPage, 'html.parser')
+    tag_list = bsObject.findAll('div', {'class': 'product-card__body'})
+
+    print('###### 실시간 뉴스 속보 #######')
+    num = 1
+    for tag in tag_list :
+
+        subject = tag.find('div', {'class': 'product-card__title'}).text
+        use1 = tag.find('div', {'class': 'product-card__subtitle'}).text
+        color = tag.find('div', {'class': 'product-card__count-item'}).text
+        price = tag.find('div', {'class': 'product-card__price'}).text
+        link = tag.find('a', {'class': 'product-card__link-overlay'})['href']
+        imgUrl1 = tag.find('div',{'class':'wall-image-loader css-1la3v4n'})
+        src = imgUrl1.find('img')['src']
+
+        # imgUrl1 = tag.find('div',{'class':'wall-image-loader css-1la3v4n'})
+        # imgUrl2 = imgUrl1.find('img')['src']
+
+        # img = tag.find('img', {'class': 'product-card__hero-image css-1fxh5tw'})
+        # if imgUrl2.startswith('data:image'):
+        #     imgUrl2 = 'https://www.nike.com/kr/w/men-shoes-nik1zy7ok?sort=newest/default-image.png'  # replace with your own default image URL
+        
+
+        # # Sample Base64-encoded data URI
+        # data_uri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAAALAAAAAABAAEAAAIBRAA7'
+
+        # Remove data URI prefix
+        data = src.replace('data:image/gif;base64,', '')
+
+        # Base64-decode data
+        decoded_data = base64.b64decode(data)
+
+        # Convert decoded data to URL-encoded string
+        url_data = decoded_data.hex()
+        url = 'https://static.nike.com/a/images/' + url_data
+
+        
+        
+        insertData(subject,link,use1,price,color,url)
+
+        print('(' , num, ')', subject)
+        print('\t'+use1)
+        print('\t'+color)
+        print('\t'+price)
+        print('\t'+link)
+        print('\t'+url)
+        # 썸네일 이미지를 제대로 받아오지 못하는 이슈
+        # print(imgUrl1)
+        # print(imgUrl2)
+        num += 1
+
+        
+
+    time.sleep(60)
