@@ -1,0 +1,34 @@
+.place-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.map-container {
+  width: 100%;
+  height: 400px;
+  margin-bottom: 1rem;
+}
+
+.temperature-analysis {
+  text-align: center;
+}
+
+.category-container {
+  margin-top: 1rem;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.grid-item {
+  width: 100%;
+}
+
+.grid-item img {
+  width: 100%;
+}
